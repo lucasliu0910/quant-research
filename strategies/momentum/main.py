@@ -1,18 +1,28 @@
 import yfinance as yf
-from strategies.momentum.signal import compute_momentum_signal
-from strategies.momentum.backtest import backtest
+import matplotlib.pyplot as plt
 
-# 1. 抓資料
-df = yf.download("AAPL", start="2018-01-01")
+from signal_generator import compute_momentum_signal
+from backtest import backtest
 
-# 2. 產生 signal
-df = compute_momentum_signal(df)
 
-# 3. backtest
-df = backtest(df)
+def main():
+    # 1. 下載資料（單一股票先測通流程）
+    df = yf.download("TSLA", start="2018-01-01")
 
-# 4. 看結果
-print(df[["equity_curve"]].tail())
+    # 2. 產生 momentum signal
+    df = compute_momentum_signal(df)
 
-# 5. 畫圖
-df["equity_curve"].plot()
+    # 3. backtest
+    df = backtest(df)
+
+    # 4. 看最後結果
+    print(df.tail())
+
+    # 5. 畫 equity curve
+    plt.figure()
+    df["equity_curve"].plot(title="Momentum Strategy Equity Curve")
+    plt.show()
+
+
+if __name__ == "__main__":
+    main()
